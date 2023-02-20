@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - uses: cardinalby/git-get-release-action@v1
-        id: get_release
+        id: get-release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -30,6 +30,22 @@ jobs:
       
       - name : Show release
         run: |
-          echo "Release version fetched : ${{ steps.get_release.outputs.tag_name }}"
+          echo "Release fetched : ${{ steps.get-release.outputs.tag_name }}"
+
+      - name: Create Release
+        if: steps.get-release.outputs.tag_name == ''
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name:  ${{ inputs.version }}
+          release_name: Release  ${{ inputs.version }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
 
       
