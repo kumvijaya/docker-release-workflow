@@ -21,3 +21,6 @@ This workflow has below steps:
     - **Docker Build and Push**: This is executed only if the given release version not exists in the repository. Uses [Docker buildx action](https://github.com/docker/build-push-action)
 - Use the given input version for deployment
     - Deployment steps to be added (**TODO**) 
+
+
+<img width="940" alt="Screenshot 2023-02-19 at 11 04 27 PM" src="https://user-images.githubusercontent.com/121352639/220163337-062fa68c-0556-4e94-81a8-91e94273aab5.png">
