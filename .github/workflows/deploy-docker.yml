@@ -76,4 +76,8 @@ jobs:
           file: ./Dockerfile
           tags: ${{ inputs.release_tag }}:latest,${{ inputs.release_tag }}:${{ inputs.release_version }}
 
+      - name : Deploy
+        run: |
+          echo "TODO: Use release tag/version : ${{ inputs.release_tag }}/${{ inputs.release_version }}"
+
       
