@@ -9,6 +9,7 @@ on:
 
 jobs:
   docker-workflow:
+    permissions: write-all
     runs-on: ubuntu-latest
     name: Deploy Docker
     continue-on-error: false
