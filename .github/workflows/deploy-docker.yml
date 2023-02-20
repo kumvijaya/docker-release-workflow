@@ -1,8 +1,3 @@
-# Inputs:
-# release_version: The verison to deploy. Takes semantic version example 1.0.1, If given release version not available, new release will be created and deployed.
-# release_description: The info to use for creating new release in GitHub. This is used incase of creating new release.
-# release_tag : The docker tag for deployment
-
 name: Deploy Docker
 
 on:
