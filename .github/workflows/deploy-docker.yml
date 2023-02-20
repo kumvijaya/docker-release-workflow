@@ -1,20 +1,28 @@
+# Inputs:
+# release_version: The verison to deploy. Takes semantic version example 1.0.1, If given release version not available, new release will be created and deployed.
+# release_description: The info to use for creating new release in GitHub. This is used incase of creating new release.
+# release_tag : The docker tag for deployment
+
 name: Deploy Docker
 
 on:
   workflow_dispatch:
     inputs:
-      release_version:
-        type: string
-        required: true
-        description: Release version (ex 1.0.1). If given release version not available, new release will be created and deployed.
       release_tag:
         type: string
         required: true
         description: Release tag
+        default: vkumar2/docker-app
+      release_version:
+        type: string
+        required: true
+        description: Release version
+        default: 1.0.1     
       release_description:
         type: string
         required: false
-        description: Release description (Used incase of creating new release)
+        description: Release description
+        default: The automated docker deployment
 
 jobs:
   docker-workflow:
