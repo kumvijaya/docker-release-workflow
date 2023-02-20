@@ -3,9 +3,14 @@ name: Deploy Docker
 on:
   workflow_dispatch:
     inputs:
-      version:
+      release_version:
         type: string
-        description: The sem version to deploy
+        required: true
+        description: Release version (ex 1.0.1). If given release version not available, new release will be created and deployed.
+      release_description:
+        type: string
+        required: false
+        description: Release description (Used incase of creating new release)
 
 jobs:
   docker-workflow:
@@ -21,17 +26,14 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - uses: cardinalby/git-get-release-action@v1
+      - name : Get Release
+        uses: cardinalby/git-get-release-action@v1
         id: get-release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag: ${{ inputs.version }}
+          tag: ${{ inputs.release_version }}
           doNotFailIfNotFound : true
-      
-      - name : Show release
-        run: |
-          echo "Release fetched : ${{ steps.get-release.outputs.tag_name }}"
 
       - name: Create Release
         if: steps.get-release.outputs.tag_name == ''
@@ -40,12 +42,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name:  ${{ inputs.version }}
-          release_name: Release  ${{ inputs.version }}
+          tag_name:  ${{ inputs.release_version }}
+          release_name: Release  ${{ inputs.release_version }}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            Release created by GitHub Action.
+            ${{ inputs.release_description }}
           draft: false
           prerelease: false
 
