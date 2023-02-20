@@ -25,10 +25,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag: ${{ github.event.inputs.version }}
+          tag: ${{ inputs.version }}
+          doNotFailIfNotFound : true
       
       - name : Show release
         run: |
-          echo "Release version fetched : ${{ steps.get_release.outputs.id }}"
+          echo "Release version fetched : ${{ steps.get_release.outputs.tag_name }}"
 
       
