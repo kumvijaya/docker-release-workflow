@@ -2,10 +2,10 @@ name: Deploy Docker
 
 on:
   workflow_dispatch:
-  inputs:
-    version:
-      type: string
-      description: The sem version to deploy
+    inputs:
+      version:
+        type: string
+        description: The sem version to deploy
 
 jobs:
   docker-workflow:
