@@ -127,7 +127,7 @@ jobs:
         with:
           push: true
           file: ./Dockerfile
-          tags: $DOCKER_TAGS
+          tags: ${{ env.DOCKER_TAGS }}
 
       # - name : Deploy
       #   run: |
