@@ -62,7 +62,7 @@ jobs:
         uses: zwaldowski/semver-release-action@v3
         with:
           dry_run: true
-          # bump: ${{ steps.bump.outputs.match }}
+          bump: patch
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: echo "Next version = ${{ steps.next_version.outputs.version }}"
