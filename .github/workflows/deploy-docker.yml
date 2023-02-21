@@ -86,9 +86,14 @@ jobs:
           CREATE_RELEASE: ${{ inputs.create_release }}
           SEM_VERSION: ${{ steps.next_version.outputs.version }}
           FETCHED_RELEASE: ${{ steps.get-release.outputs.tag_name }}
-          RELEASE_TAG: ${{ inputs.release_tag }}
+          RELEASE_TAG: ${{ inputs.docker_tag }}
         run: |
           tags=''
+          echo "INPUT_VERSION=$INPUT_VERSION"
+          echo "CREATE_RELEASE=$CREATE_RELEASE"
+          echo "SEM_VERSION=$SEM_VERSION"
+          echo "FETCHED_RELEASE=$FETCHED_RELEASE"
+          echo "RELEASE_TAG=$RELEASE_TAG"
           if [ $CREATE_RELEASE == 'true' ]; then
               tags="$RELEASE_TAG:$SEM_VERSION,$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:latest"
               if [ $INPUT_VERSION != '' ]; then
