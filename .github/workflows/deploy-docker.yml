@@ -27,7 +27,6 @@ on:
         type: string
         required: false
         description: Docker tag
-        default: vkumar2/docker-app
 
 jobs:
   docker-workflow:
