@@ -82,7 +82,7 @@ jobs:
 
       - name: Populate tags
         env:
-          INPUT_VERSION: ${{ inputs.vestion }}
+          INPUT_VERSION: ${{ inputs.version }}
           CREATE_RELEASE: ${{ inputs.create_release }}
           SEM_VERSION: ${{ steps.next_version.outputs.version }}
           FETCHED_RELEASE: ${{ steps.get-release.outputs.tag_name }}
