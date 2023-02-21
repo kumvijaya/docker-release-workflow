@@ -14,12 +14,11 @@ on:
         type: string
         required: false
         description: Version
-        default: JIRA-1010
+        default: 1.0.1
       create_release:
         type: boolean
         required: false
         description: Create github release
-        default: 1.0.1
       release_description:
         type: string
         required: false
