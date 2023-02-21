@@ -89,6 +89,7 @@ jobs:
           RELEASE_TAG: ${{ inputs.docker_tag }}
         run: |
           tags=''
+          deploy_version=''
           echo "INPUT_VERSION=$INPUT_VERSION"
           echo "CREATE_RELEASE=$CREATE_RELEASE"
           echo "SEM_VERSION=$SEM_VERSION"
@@ -98,17 +99,26 @@ jobs:
               tags="$RELEASE_TAG:$SEM_VERSION,$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:latest"
               if [ "$INPUT_VERSION" != '' ]; then
                   tags="${tags},$RELEASE_TAG:$INPUT_VERSION"
-              fi 
+              fi
+              deploy_version=$SEM_VERSION
           else
-              if [ "$FETCHED_RELEASE" == '' ] && [ "$INPUT_VERSION" != '' ]; then
-                  tags="$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:$INPUT_VERSION"
+              if [ "$FETCHED_RELEASE" != '' ]; then
+                  if [ "$INPUT_VERSION" != '' ]; then
+                      deploy_version=$INPUT_VERSION
+                  fi                  
+              else
+                  if [ "$INPUT_VERSION" != '' ]; then
+                      tags="$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:$INPUT_VERSION"
+                      deploy_version=$INPUT_VERSION
+                  else
+                      deploy_version=latest
+                  fi
               fi
           fi
           echo "tags=$tags"
+          echo "deploy_version=$deploy_version"
           echo "DOCKER_TAGS=$tags" >> $GITHUB_ENV
-
-      - name: Test env
-        run: echo $DOCKER_TAGS
+          echo "DEPLOY_VERSION=$deploy_version" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         if: env.DOCKER_TAGS != ''
@@ -129,8 +139,8 @@ jobs:
           file: ./Dockerfile
           tags: ${{ env.DOCKER_TAGS }}
 
-      # - name : Deploy
-      #   run: |
-      #     echo "TODO: Use release tag/version : ${{ inputs.release_tag }}/${{ inputs.release_version }}"
+      - name : Print Deployment tag and version
+        run: |
+          echo "Use deployment tag/version : ${{ inputs.release_tag }}/${{ env.DEPLOY_VERSION }}"
 
       
