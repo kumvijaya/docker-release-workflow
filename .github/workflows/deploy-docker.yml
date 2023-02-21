@@ -105,6 +105,8 @@ jobs:
               if [ "$FETCHED_RELEASE" != '' ]; then
                   if [ "$INPUT_VERSION" != '' ]; then
                       deploy_version=$INPUT_VERSION
+                  else
+                      deploy_version=latest
                   fi                  
               else
                   if [ "$INPUT_VERSION" != '' ]; then
