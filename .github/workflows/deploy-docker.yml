@@ -60,10 +60,10 @@ jobs:
 
       - id: next_version
         uses: zwaldowski/semver-release-action@v3
-          with:
-            dry_run: true
-            bump: ${{ steps.bump.outputs.match }}
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          dry_run: true
+          bump: ${{ steps.bump.outputs.match }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: echo "Next version = ${{ steps.next_version.outputs.version }}"
 
