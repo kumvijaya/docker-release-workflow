@@ -68,7 +68,7 @@ jobs:
           echo "steps.get-release.outputs.tag_name= ${{ steps.get-release.outputs.tag_name }}"
 
       - name: Create Release 
-        if: ${{ inputs.create_release }}
+        if: ${{ inputs.create_release && steps.get-release.outputs.tag_name == '' }}
         id: create_release
         uses: actions/create-release@v1 # find alternate action as it is deprecated
         env:
