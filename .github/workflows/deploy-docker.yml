@@ -105,8 +105,10 @@ jobs:
               fi
           fi
           echo "tags=$tags"
-          echo "TAGS=$tags" >> $GITHUB_ENV
-          echo "env.TAGS=$TAGS"
+          echo "DOCKER_TAGS=$tags" >> $GITHUB_ENV
+
+      - name: Test env
+        run: echo $DOCKER_TAGS
 
       # - name: Set up Docker Buildx
       #   if: steps.get-release.outputs.tag_name == ''
