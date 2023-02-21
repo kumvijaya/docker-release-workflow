@@ -14,7 +14,6 @@ on:
         type: string
         required: false
         description: Version
-        default: 1.0.1
       create_release:
         type: boolean
         required: false
