@@ -25,7 +25,7 @@ on:
         default: Release related info       
       docker_tag:
         type: string
-        required: true
+        required: false
         description: Docker tag
         default: vkumar2/docker-app
 
