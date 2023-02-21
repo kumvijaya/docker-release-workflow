@@ -60,7 +60,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          echo "Nextversion = ${{ steps.next_version.outputs.version }}"
+          echo "Next.version = ${{ steps.next_version.outputs.version }}"
           echo "inputs.create_release= ${{ inputs.create_release }}"
           echo "inputs.version= ${{ inputs.version }}"
           echo "steps.get-release.outputs.tag_name= ${{ steps.get-release.outputs.tag_name }}"
