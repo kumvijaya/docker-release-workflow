@@ -94,13 +94,13 @@ jobs:
           echo "SEM_VERSION=$SEM_VERSION"
           echo "FETCHED_RELEASE=$FETCHED_RELEASE"
           echo "RELEASE_TAG=$RELEASE_TAG"
-          if [ $CREATE_RELEASE == 'true' ]; then
+          if [ "$CREATE_RELEASE" == 'true' ]; then
               tags="$RELEASE_TAG:$SEM_VERSION,$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:latest"
-              if [ $INPUT_VERSION != '' ]; then
+              if [ "$INPUT_VERSION" != '' ]; then
                   tags="${tags},$RELEASE_TAG:$INPUT_VERSION"
               fi 
           else
-              if [ $FETCHED_RELEASE == '' ] && [ $INPUT_VERSION != '' ]; then
+              if [ "$FETCHED_RELEASE" == '' ] && [ "$INPUT_VERSION" != '' ]; then
                   tags="$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:$INPUT_VERSION"
               fi
           fi
