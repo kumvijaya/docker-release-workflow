@@ -141,6 +141,6 @@ jobs:
 
       - name : Print Deployment tag and version
         run: |
-          echo "Use deployment tag/version : ${{ inputs.release_tag }}/${{ env.DEPLOY_VERSION }}"
+          echo "Use deployment tag/version : ${{ inputs.docker_tag }}/${{ env.DEPLOY_VERSION }}"
 
       
