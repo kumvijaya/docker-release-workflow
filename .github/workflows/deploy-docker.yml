@@ -10,25 +10,21 @@ name: Deploy Docker
 on:
   workflow_dispatch:
     inputs:
-
       version:
         type: string
         required: false
         description: Version
         default: JIRA-1010
-
       create_release:
         type: boolean
         required: false
         description: Create github release
         default: 1.0.1
-
       release_description:
         type: string
         required: false
         description: Github release description
-        default: Release related info
-       
+        default: Release related info       
       docker_tag:
         type: string
         required: true
