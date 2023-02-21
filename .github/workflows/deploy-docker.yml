@@ -42,6 +42,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: main
+          #branch only main
 
       - name : Get Release
         uses: cardinalby/git-get-release-action@v1
@@ -66,7 +68,7 @@ jobs:
           echo "steps.get-release.outputs.tag_name= ${{ steps.get-release.outputs.tag_name }}"
 
       - name: Create Release 
-        if: ${{ inputs.create_release && steps.get-release.outputs.tag_name == '' }}
+        if: ${{ inputs.create_release }}
         id: create_release
         uses: actions/create-release@v1 # find alternate action as it is deprecated
         env:
