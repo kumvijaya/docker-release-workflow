@@ -159,6 +159,9 @@ jobs:
       - run: |
           set -x
           docker version
+
+      - name: Login docker
+        run: |
           registry=''
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
 
