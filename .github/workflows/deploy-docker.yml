@@ -105,9 +105,11 @@ jobs:
           deploy_version=''
           if [ "$CREATE_RELEASE" == 'true' ]; then
               if [ "$FETCHED_RELEASE" == '' ]; then
-                  tags="$RELEASE_TAG:$SEM_VERSION,$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:latest"
+                  tags="${tags} -t $RELEASE_TAG:$SEM_VERSION"
+                  tags="${tags} -t $RELEASE_TAG:$GITHUB_SHA"
+                  tags="${tags} -t $RELEASE_TAG:latest"
                   if [ "$INPUT_VERSION" != '' ]; then
-                      tags="${tags},$RELEASE_TAG:$INPUT_VERSION"
+                      tags="${tags} -t $RELEASE_TAG:$INPUT_VERSION"
                   fi
                   deploy_version=$SEM_VERSION
               else
@@ -123,7 +125,8 @@ jobs:
                   fi                  
               else
                   if [ "$INPUT_VERSION" != '' ]; then
-                      tags="$RELEASE_TAG:$GITHUB_SHA,$RELEASE_TAG:$INPUT_VERSION"
+                      tags="${tags} -t $RELEASE_TAG:$INPUT_VERSION"
+                      tags="${tags} -t $RELEASE_TAG:$GITHUB_SHA"
                       deploy_version=$INPUT_VERSION
                   else
                       deploy_version=latest
@@ -160,11 +163,13 @@ jobs:
           set -x
           docker version
 
-      - name: Login docker
+      - name: Build and Push docker
+        if: env.DOCKER_TAGS != ''
         run: |
           registry=''
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
-          echo 'logged in'
+          docker build -f Dockerfile ${{ env.DOCKER_TAGS }}
+          docker push vkumar2/docker-app --all-tags
 
       - name : Print Deployment tag and version
         run: |
