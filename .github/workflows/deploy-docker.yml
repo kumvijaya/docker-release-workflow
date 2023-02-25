@@ -159,6 +159,8 @@ jobs:
       - run: |
           set -x
           docker version
+          registry=''
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
 
       - name : Print Deployment tag and version
         run: |
