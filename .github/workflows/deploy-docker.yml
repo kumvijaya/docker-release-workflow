@@ -167,11 +167,11 @@ jobs:
         with:
           repository: ${{ steps.extract_owner.outputs.owner }}/docker-workflow-config
           ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           path: docker-workflow-config
 
       - run: |
-          sudo ./docker-workflow-config/build.sh
+          docker-workflow-config/build.sh
 
       # - uses: docker-practice/actions-setup-docker@master
       #   timeout-minutes: 12
