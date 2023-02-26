@@ -157,21 +157,37 @@ jobs:
       #     file: ./Dockerfile
       #     tags: ${{ env.DOCKER_TAGS }}
 
-      - uses: docker-practice/actions-setup-docker@master
-        timeout-minutes: 12
+      - name: Extract owner
+        shell: bash
+        run: echo "##[set-output name=owner;]$(echo ${GITHUB_REPOSITORY%/*})"
+        id: extract_owner
+
+      - name: Checkout config repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ steps.extract_owner.outputs.owner }}/docker-workflow-config
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: docker-workflow-config
+
       - run: |
-          set -x
-          docker version
+          ./docker-workflow-config/build.sh
 
-          #vkumar2/docker-app:feb, docker push vkumar2/docker-app:feb
+      # - uses: docker-practice/actions-setup-docker@master
+      #   timeout-minutes: 12
+      # - run: |
+      #     set -x
+      #     docker version
 
-      - name: Build and Push docker
-        if: env.DOCKER_TAGS != ''
-        run: |
-          registry=''
-          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
-          docker build -f Dockerfile ${{ env.DOCKER_TAGS }} .          
-          docker push vkumar2/docker-app --all-tags
+      #     #vkumar2/docker-app:feb, docker push vkumar2/docker-app:feb
+
+      # - name: Build and Push docker
+      #   if: env.DOCKER_TAGS != ''
+      #   run: |
+      #     registry=''
+      #     echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
+      #     docker build -f Dockerfile ${{ env.DOCKER_TAGS }} .          
+      #     docker push vkumar2/docker-app --all-tags
 
       - name : Print Deployment tag and version
         run: |
