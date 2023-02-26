@@ -74,12 +74,6 @@ jobs:
           bump: patch
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # - run: |
-      #     echo "Next.version = ${{ steps.next_version.outputs.version }}"
-      #     echo "inputs.create_release= ${{ inputs.create_release }}"
-      #     echo "inputs.version= ${{ inputs.version }}"
-      #     echo "steps.get-release.outputs.tag_name= ${{ steps.get-release.outputs.tag_name }}"
-
       - name: Create Release 
         if: ${{ inputs.create_release && steps.get-release.outputs.tag_name == '' }}
         id: create_release
@@ -140,27 +134,36 @@ jobs:
           echo "DOCKER_TAGS=$tags" >> $GITHUB_ENV
           echo "DEPLOY_VERSION=$deploy_version" >> $GITHUB_ENV
 
-      - name: Extract owner
-        shell: bash
-        run: echo "##[set-output name=owner;]$(echo ${GITHUB_REPOSITORY%/*})"
-        id: extract_owner
-
-      - name: Checkout config repo
-        uses: actions/checkout@v3
-        with:
-          repository: ${{ steps.extract_owner.outputs.owner }}/docker-workflow-config
-          ref: main
-          token: ${{ secrets.GH_PAT }}
-          path: docker-workflow-config
-
       - uses: docker-practice/actions-setup-docker@master
         timeout-minutes: 12
- 
+
       - name: Build and Push docker
         if: env.DOCKER_TAGS != ''
+        env:
+          BUILD_FILE: build.yml
+          REGISTRY: ${{ secrets.DOCKER_REGISTRTY }}
+          USER: ${{ secrets.DOCKERHUB_USERNAME}}
+          PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          TAGS: ${{ env.DOCKER_TAGS }}
         run: |
-          set -x
-          docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
+          while IFS="=" read -r key value; do content["$key"]=$value; done < <(
+            yq '.fileImageMap | to_entries | map([.key, .value] | join("=")) | .[]' ${BUILD_FILE}
+          )
+
+          docker_registry='' 
+          if [ "$REGISTRY" != 'EMPTY' ]; then
+              docker_registry=$REGISTRY
+          fi
+
+          echo ${PASSWORD} | docker login --username ${USER} --password-stdin ${docker_registry}
+
+          for key in "${!content[@]}"; do 
+            printf "key %s, value %s\n" "$key" "${content[$key]}";
+            dockerfile=$key
+            image=${content[$key]}  
+            docker build -f ${dockerfile} ${TAGS} .
+            docker push ${image} --all-tags 
+          done
 
       - name : Print Deployment tag and version
         run: |
