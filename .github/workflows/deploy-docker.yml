@@ -129,6 +129,7 @@ jobs:
         run: |
           docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
 
-      - run: echo "Deployment version : ${{ env.DEPLOY_VERSION }}"
+      - run: |
+          echo "Deployment version : ${{ env.DEPLOY_VERSION }}"
 
       
