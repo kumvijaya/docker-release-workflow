@@ -172,10 +172,10 @@ jobs:
 
           for key in "${!content[@]}"; do 
             printf "key %s, value %s\n" "$key" "${content[$key]}";
-            file_path=$(python docker-workflow-config/get_path.py --path $key)
-            file_name=$(python docker-workflow-config/get_file.py --path $key)
+            docker_dir=$(python docker-workflow-config/get_dir.py --path $key)
+            docker_file=$(python docker-workflow-config/get_file.py --path $key)
             image=${content[$key]}  
-            docker build -f ${file_name} ${TAGS} ${file_path}
+            docker build -f ${docker_file} ${TAGS} ${docker_dir}
             docker push ${image} --all-tags 
           done
 
