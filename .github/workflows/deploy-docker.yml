@@ -140,25 +140,6 @@ jobs:
           echo "DOCKER_TAGS=$tags" >> $GITHUB_ENV
           echo "DEPLOY_VERSION=$deploy_version" >> $GITHUB_ENV
 
-      # - name: Set up Docker Buildx
-      #   if: env.DOCKER_TAGS != ''
-      #   uses: docker/setup-buildx-action@v2
-
-      # - name: Login to Docker Registry
-      #   if:  env.DOCKER_TAGS != ''
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Docker Build and push
-      #   if:  env.DOCKER_TAGS != ''
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     push: true
-      #     file: ./Dockerfile
-      #     tags: ${{ env.DOCKER_TAGS }}
-
       - name: Extract owner
         shell: bash
         run: echo "##[set-output name=owner;]$(echo ${GITHUB_REPOSITORY%/*})"
@@ -172,29 +153,14 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: docker-workflow-config
 
-      - run: |
-          docker-workflow-config/build.sh build.yml
-
-      # - uses: docker-practice/actions-setup-docker@master
-      #   timeout-minutes: 12
-      # - run: |
-      #     set -x
-      #     docker version
-
-      #     #vkumar2/docker-app:feb, docker push vkumar2/docker-app:feb
-
-      # - name: Build and Push docker
-      #   if: env.DOCKER_TAGS != ''
-          # env:
-          #   DOCKER_REGISTRTY: ${{ secrets.DOCKER_REGISTRTY }}
-      #   run: |
-            # registry='' 
-            # if [ "$DOCKER_REGISTRTY" != 'EMPTY' ]; then
-            #     registry=$DOCKER_REGISTRTY
-            # fi
-      #     echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
-      #     docker build -f Dockerfile ${{ env.DOCKER_TAGS }} .          
-      #     docker push vkumar2/docker-app --all-tags
+      - uses: docker-practice/actions-setup-docker@master
+        timeout-minutes: 12
+ 
+      - name: Build and Push docker
+        if: env.DOCKER_TAGS != ''
+        run: |
+          set -x
+          docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} ${{ env.DOCKER_TAGS }} ${{ secrets.DOCKER_REGISTRTY }}
 
       - name : Print Deployment tag and version
         run: |
