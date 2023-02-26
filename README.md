@@ -1,16 +1,14 @@
-# Docker sample with release workflow
+# Docker release workflow
 
 ## Docker Deployment Workflow
-This uses [docker release workflow](https://github.com/kumvijaya/docker-release-workflow/blob/main/.github/workflows/ansible-cd.yml)
+This uses [docker release workflow](https://github.com/kumvijaya/docker-release-workflow/blob/main/.github/workflows/deploy-docker.yml)
 
 This is configured to run on-demand (on *workflow_dispatch*)
 
 This workflow accepts below inputs
-- **Release tag** : Required. The docker tag which to be used for deployment
 - **Release version**: Required. The verison to deploy. Takes semantic version example *1.0.1*. 
 Note: If the given release version not available, new release will be created and deployed.
-- **Release description**: Optional. The description to use for creating new release in GitHub. This is used only when creating new release in GitHub.
-
+- **Create Release**: Optional. Boolean flag to denote new github release to be created.
 
 This workflow has below steps:
 
