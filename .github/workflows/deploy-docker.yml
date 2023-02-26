@@ -45,6 +45,19 @@ jobs:
           fetch-depth: 0
           ref: main
 
+      - name: Extract owner
+        shell: bash
+        run: echo "##[set-output name=owner;]$(echo ${GITHUB_REPOSITORY%/*})"
+        id: extract_owner
+
+      - name: Checkout config repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ steps.extract_owner.outputs.owner }}/docker-workflow-config
+          ref: main
+          token: ${{ secrets.GH_PAT }}
+          path: docker-workflow-config
+
       - name: Populate version to check
         env:
           INPUT_VERSION: ${{ inputs.version }}
@@ -159,9 +172,10 @@ jobs:
 
           for key in "${!content[@]}"; do 
             printf "key %s, value %s\n" "$key" "${content[$key]}";
-            dockerfile=$key
+            file_path=$(python docker-workflow-config/get_path.py $key)
+            file_name=$(python docker-workflow-config/get_file.py $key)
             image=${content[$key]}  
-            docker build -f ${dockerfile} ${TAGS} .
+            docker build -f ${file_name} ${TAGS} ${file_path}
             docker push ${image} --all-tags 
           done
 
