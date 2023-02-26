@@ -1,10 +1,3 @@
-# Create flow chart
-# Release version can be empty.
-# If empty, 
-# Give Betelabs
-# send contributor role
-# get flow chart
-
 name: Deploy Docker
 
 on:
@@ -17,12 +10,7 @@ on:
       create_release:
         type: boolean
         required: false
-        description: Create github release
-      release_description:
-        type: string
-        required: false
-        description: Github release description
-        default: Release related info       
+        description: Create github release    
 
 jobs:
   docker-workflow:
@@ -30,8 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Docker
     continue-on-error: false
-    env:
-      DOCKER_REGISTRTY: ${{ secrets.DOCKER_REGISTRTY }}
     steps:
 
       - name: Checkout
@@ -54,14 +40,12 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: docker-workflow-config
 
-      - name: Populate version to check
+      - name: Get release version to check
         env:
           INPUT_VERSION: ${{ inputs.version }}
         run: |
-          version_to_check=''
-          if [ "$INPUT_VERSION" == '' ]; then
-              version_to_check="EMPTY_VERSION"
-          else
+          version_to_check="EMPTY"
+          if [ "$INPUT_VERSION" != '' ]; then
               version_to_check="$INPUT_VERSION"
           fi
           echo "VERSION_TO_CHECK=$version_to_check" >> $GITHUB_ENV
@@ -85,7 +69,6 @@ jobs:
 
       - name: Create Release 
         if: ${{ inputs.create_release && steps.get-release.outputs.tag_name == '' }}
-        id: create_release
         uses: actions/create-release@v1 # find alternate action as it is deprecated
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -93,8 +76,7 @@ jobs:
           tag_name:  ${{ steps.next_version.outputs.version }}
           release_name: Release  ${{ steps.next_version.outputs.version }}
           body: |
-            Release created by GitHub Action.
-            ${{ inputs.release_description }}
+            Release created by GitHub Action
           draft: false
           prerelease: false
 
@@ -119,7 +101,6 @@ jobs:
               else
                   deploy_version=$INPUT_VERSION
               fi
-              
           else
               if [ "$FETCHED_RELEASE" != '' ]; then
                   if [ "$INPUT_VERSION" != '' ]; then
@@ -137,28 +118,17 @@ jobs:
                   fi
               fi
           fi
-          echo "tags=$tags"
-          echo "deploy_version=$deploy_version"
           echo "DOCKER_TAGS=$tags" >> $GITHUB_ENV
           echo "DEPLOY_VERSION=$deploy_version" >> $GITHUB_ENV
 
       - uses: docker-practice/actions-setup-docker@master
         timeout-minutes: 12
 
-      - name: Build and Push docker
+      - name: Build and Push docker image
         if: env.DOCKER_TAGS != ''
-        env:
-          BUILD_FILE: build.yml
-          REGISTRY: ${{ secrets.DOCKER_REGISTRTY }}
-          USER: ${{ secrets.DOCKERHUB_USERNAME}}
-          PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-          TAGS: ${{ env.DOCKER_TAGS }}
         run: |
-          set -x
           docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
 
-      - name : Print Deployment tag and version
-        run: |
-          echo "Use deployment tag/version : ${{ inputs.docker_tag }}/${{ env.DEPLOY_VERSION }}"
+      - run: echo "Deployment version : ${{ env.DEPLOY_VERSION }}"
 
       
