@@ -23,10 +23,6 @@ on:
         required: false
         description: Github release description
         default: Release related info       
-      docker_tag:
-        type: string
-        required: false
-        description: Docker tag
 
 jobs:
   docker-workflow:
@@ -108,17 +104,16 @@ jobs:
           CREATE_RELEASE: ${{ inputs.create_release }}
           SEM_VERSION: ${{ steps.next_version.outputs.version }}
           FETCHED_RELEASE: ${{ steps.get-release.outputs.tag_name }}
-          RELEASE_TAG: ${{ inputs.docker_tag }}
         run: |
           tags=''
           deploy_version=''
           if [ "$CREATE_RELEASE" == 'true' ]; then
               if [ "$FETCHED_RELEASE" == '' ]; then
-                  tags="${tags} -t $RELEASE_TAG:$SEM_VERSION"
-                  tags="${tags} -t $RELEASE_TAG:$GITHUB_SHA"
-                  tags="${tags} -t $RELEASE_TAG:latest"
+                  tags="$SEM_VERSION"
+                  tags="${tags},$GITHUB_SHA"
+                  tags="${tags},latest"
                   if [ "$INPUT_VERSION" != '' ]; then
-                      tags="${tags} -t $RELEASE_TAG:$INPUT_VERSION"
+                      tags="${tags},$INPUT_VERSION"
                   fi
                   deploy_version=$SEM_VERSION
               else
@@ -134,8 +129,8 @@ jobs:
                   fi                  
               else
                   if [ "$INPUT_VERSION" != '' ]; then
-                      tags="${tags} -t $RELEASE_TAG:$INPUT_VERSION"
-                      tags="${tags} -t $RELEASE_TAG:$GITHUB_SHA"
+                      tags="$INPUT_VERSION"
+                      tags="${tags},$GITHUB_SHA"
                       deploy_version=$INPUT_VERSION
                   else
                       deploy_version=latest
