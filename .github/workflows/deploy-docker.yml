@@ -162,18 +162,16 @@ jobs:
           while IFS="=" read -r key value; do content["$key"]=$value; done < <(
             yq '.fileImageMap | to_entries | map([.key, .value] | join("=")) | .[]' ${BUILD_FILE}
           )
-
-          docker_registry='' 
-          if [ "$REGISTRY" != 'EMPTY' ]; then
-              docker_registry=$REGISTRY
-          fi
-
-          echo ${PASSWORD} | docker login --username ${USER} --password-stdin ${docker_registry}
-
+          
           for key in "${!content[@]}"; do 
             printf "key %s, value %s\n" "$key" "${content[$key]}";
+            docker_registry='' 
+            if [ "$REGISTRY" != 'EMPTY' ]; then
+                docker_registry=$REGISTRY
+            fi
             docker_dir=$(python docker-workflow-config/get_dir.py --path $key)
             docker_file=$(python docker-workflow-config/get_file.py --path $key)
+            echo ${PASSWORD} | docker login --username ${USER} --password-stdin ${docker_registry}
             image=${content[$key]}  
             docker build -f ${docker_file} ${TAGS} ${docker_dir}
             docker push ${image} --all-tags 
