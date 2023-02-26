@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Docker
     continue-on-error: false
+    env:
+      DOCKER_REGISTRTY: ${{ secrets.DOCKER_REGISTRTY }}
     steps:
 
       - name: Checkout
@@ -171,7 +173,7 @@ jobs:
           path: docker-workflow-config
 
       - run: |
-          docker-workflow-config/build.sh
+          docker-workflow-config/build.sh build.yml
 
       # - uses: docker-practice/actions-setup-docker@master
       #   timeout-minutes: 12
@@ -183,8 +185,13 @@ jobs:
 
       # - name: Build and Push docker
       #   if: env.DOCKER_TAGS != ''
+          # env:
+          #   DOCKER_REGISTRTY: ${{ secrets.DOCKER_REGISTRTY }}
       #   run: |
-      #     registry=''
+            # registry='' 
+            # if [ "$DOCKER_REGISTRTY" != 'EMPTY' ]; then
+            #     registry=$DOCKER_REGISTRTY
+            # fi
       #     echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME}} --password-stdin ${registry}
       #     docker build -f Dockerfile ${{ env.DOCKER_TAGS }} .          
       #     docker push vkumar2/docker-app --all-tags
