@@ -160,7 +160,7 @@ jobs:
         if: env.DOCKER_TAGS != ''
         run: |
           set -x
-          docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} ${{ env.DOCKER_TAGS }} ${{ secrets.DOCKER_REGISTRTY }}
+          docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
 
       - name : Print Deployment tag and version
         run: |
