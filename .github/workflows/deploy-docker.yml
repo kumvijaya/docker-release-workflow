@@ -15,6 +15,7 @@ on:
         type: string
         required: true
         description: Build images
+        
 jobs:
   docker-workflow:
     permissions: write-all
@@ -67,7 +68,7 @@ jobs:
         uses: zwaldowski/semver-release-action@v3
         with:
           dry_run: true
-          bump: patch
+          bump: minor
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release 
