@@ -10,8 +10,11 @@ on:
       create_release:
         type: boolean
         required: false
-        description: Create github release    
-
+        description: Create github release
+      build_images:
+        type: string
+        required: true
+        description: Build images
 jobs:
   docker-workflow:
     permissions: write-all
@@ -127,7 +130,7 @@ jobs:
       - name: Build and Push docker image
         if: env.DOCKER_TAGS != ''
         run: |
-          docker-workflow-config/build.sh build.yml ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
+          docker-workflow-config/build.sh ${{ inputs.build_images }} ${{ secrets.DOCKERHUB_USERNAME}} ${{ secrets.DOCKERHUB_TOKEN }} '${{ env.DOCKER_TAGS }}' ${{ secrets.DOCKER_REGISTRTY }}
 
       - run: |
           echo "Deployment version : ${{ env.DEPLOY_VERSION }}"
